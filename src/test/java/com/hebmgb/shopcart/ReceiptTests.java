@@ -77,12 +77,12 @@ class ReceiptTests {
 
 		String contentResult = mvcResult.getResponse().getContentAsString();
 		JSONObject receiptObject = new JSONObject(contentResult);
-		assertEquals(receiptObject.get("subTotal"), new BigDecimal(1.99 + 2.01).doubleValue());
+		assertEquals(receiptObject.get("subTotalBeforeDiscounts"), new BigDecimal(1.99 + 2.01).doubleValue());
 		assertEquals(receiptObject.get("taxTotal"), new BigDecimal(0.16).doubleValue());
-		assertEquals(receiptObject.get("taxableSubTotal"), new BigDecimal(1.99).doubleValue());
+		assertEquals(receiptObject.get("taxableSubTotalAfterDiscounts"), new BigDecimal(1.99).doubleValue());
 		assertEquals(receiptObject.get("grandTotal"), new BigDecimal(4.16).doubleValue());
 
-		Mockito.verify(receiptService, atMost(2)).calculateTotals(any(), any());
+		Mockito.verify(receiptService, atMost(2)).calculateTotals(any(), any(), any());
 
 		cart = "{\"items\":[" + mockCartItem3.toString() + "]}";
 
@@ -97,7 +97,7 @@ class ReceiptTests {
 		receiptObject = new JSONObject(contentResult);
 		assertEquals(receiptObject.get("grandTotal"), 0);
 
-		Mockito.verify(receiptService, atMost(3)).calculateTotals(any(), any());
+		Mockito.verify(receiptService, atMost(3)).calculateTotals(any(), any(), any());
 	}
 
 	@Test
@@ -115,7 +115,7 @@ class ReceiptTests {
 		JSONObject receiptObject = new JSONObject(contentResult);
 		assertEquals(receiptObject.get("grandTotal"), 0);
 
-		Mockito.verify(receiptService, atLeast(0)).calculateTotals(any(), any());
+		Mockito.verify(receiptService, atLeast(0)).calculateTotals(any(), any(), any());
 	}
 
 	@Test
@@ -128,7 +128,7 @@ class ReceiptTests {
 				.andExpect(status().is4xxClientError())
 				.andReturn();
 
-		Mockito.verify(receiptService, atLeast(0)).calculateTotals(any(), any());
+		Mockito.verify(receiptService, atLeast(0)).calculateTotals(any(), any(), any());
 
 		cart = "{\"items\":[" + invalidCartItem2.toString() + "]}";
 
@@ -138,6 +138,6 @@ class ReceiptTests {
 				.andExpect(status().is4xxClientError())
 				.andReturn();
 
-		Mockito.verify(receiptService, atLeast(0)).calculateTotals(any(), any());
+		Mockito.verify(receiptService, atLeast(0)).calculateTotals(any(), any(), any());
 	}
 }
