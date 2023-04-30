@@ -71,7 +71,7 @@ class ReceiptTests {
 
 		String contentResult = mvcResult.getResponse().getContentAsString();
 		JSONObject receiptObject = new JSONObject(contentResult);
-		assertEquals(receiptObject.get("grandTotal"), new BigDecimal(1.99 + 2.01).doubleValue());
+		assertEquals(receiptObject.get("subTotal"), new BigDecimal(1.99 + 2.01).doubleValue());
 
 		Mockito.verify(receiptService, atMost(2)).calculateTotals(any(), any());
 
@@ -86,7 +86,7 @@ class ReceiptTests {
 
 		contentResult = mvcResult.getResponse().getContentAsString();
 		receiptObject = new JSONObject(contentResult);
-		assertEquals(receiptObject.get("grandTotal"), 0);
+		assertEquals(receiptObject.get("grandTotal"), 0.0);
 
 		Mockito.verify(receiptService, atMost(3)).calculateTotals(any(), any());
 	}
