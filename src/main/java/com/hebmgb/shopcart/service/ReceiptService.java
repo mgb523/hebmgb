@@ -11,14 +11,14 @@ import java.math.RoundingMode;
 public class ReceiptService {
 
     public void calculateTotals(Receipt receipt, CartItem item) {
-        // Calculate subtotal
+        // subtotal = receipt subtotal + item price
         receipt.setSubTotal(receipt.getSubTotal().add(item.getPrice()));
 
-        // Calculate tax total
+        // tax total = receipt tax total + item tax
         BigDecimal itemTax = item.getPrice().multiply(new BigDecimal(8.25/100.00));
         receipt.setTaxTotal(receipt.getTaxTotal().add(itemTax).setScale(2, RoundingMode.HALF_EVEN));
 
-        // Calculate grand total
-        receipt.setGrandTotal(receipt.getSubTotal().subtract(receipt.getTaxTotal()));
+        // grand total = subtotal + tax total
+        receipt.setGrandTotal(receipt.getSubTotal().add(receipt.getTaxTotal()));
     }
 }
