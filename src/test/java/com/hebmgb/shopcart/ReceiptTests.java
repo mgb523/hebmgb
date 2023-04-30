@@ -47,10 +47,12 @@ class ReceiptTests {
 		mockCartItem1 = new JSONObject();
 		mockCartItem1.put("itemName", "Mock brownies");
 		mockCartItem1.put("price", new BigDecimal(1.99));
+		mockCartItem1.put("isTaxable", true);
 
 		mockCartItem2 = new JSONObject();
 		mockCartItem2.put("itemName", "Mock bananas");
 		mockCartItem2.put("price", new BigDecimal(2.01));
+		mockCartItem2.put("isTaxable", false);
 
 		mockCartItem3 = new JSONObject();
 		mockCartItem3.put("itemName", "Free pizza");
@@ -76,6 +78,9 @@ class ReceiptTests {
 		String contentResult = mvcResult.getResponse().getContentAsString();
 		JSONObject receiptObject = new JSONObject(contentResult);
 		assertEquals(receiptObject.get("subTotal"), new BigDecimal(1.99 + 2.01).doubleValue());
+		assertEquals(receiptObject.get("taxTotal"), new BigDecimal(0.16).doubleValue());
+		assertEquals(receiptObject.get("taxableSubTotal"), new BigDecimal(1.99).doubleValue());
+		assertEquals(receiptObject.get("grandTotal"), new BigDecimal(4.16).doubleValue());
 
 		Mockito.verify(receiptService, atMost(2)).calculateTotals(any(), any());
 
@@ -90,7 +95,7 @@ class ReceiptTests {
 
 		contentResult = mvcResult.getResponse().getContentAsString();
 		receiptObject = new JSONObject(contentResult);
-		assertEquals(receiptObject.get("grandTotal"), 0.0);
+		assertEquals(receiptObject.get("grandTotal"), 0);
 
 		Mockito.verify(receiptService, atMost(3)).calculateTotals(any(), any());
 	}

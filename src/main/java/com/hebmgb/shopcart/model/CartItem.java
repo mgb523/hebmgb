@@ -1,18 +1,17 @@
 package com.hebmgb.shopcart.model;
 
 import com.hebmgb.shopcart.exception.ApiRequestException;
-import lombok.NonNull;
 
 import java.math.BigDecimal;
 
 public class CartItem {
     private String itemName;
     private Integer sku;
-    private Boolean isTaxable;
-    private Boolean ownBrand;
+    private boolean isTaxable;
+    private boolean ownBrand;
     private BigDecimal price;
 
-    public CartItem(String itemName, Integer sku, Boolean isTaxable, Boolean ownBrand, BigDecimal price) throws ApiRequestException {
+    public CartItem(String itemName, Integer sku, boolean isTaxable, boolean ownBrand, BigDecimal price) throws ApiRequestException {
         if (itemName == null || itemName.isEmpty()) {
             throw new ApiRequestException("ItemName field was not specified for one or more items in the cart");
         } else if (null == price) {

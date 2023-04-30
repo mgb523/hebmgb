@@ -6,6 +6,7 @@ public class Receipt {
     private BigDecimal grandTotal = BigDecimal.ZERO;
     private BigDecimal subTotal = BigDecimal.ZERO;
     private BigDecimal taxTotal = BigDecimal.ZERO;
+    private BigDecimal taxableSubTotal = BigDecimal.ZERO;
 
 
     public BigDecimal getGrandTotal() {
@@ -32,10 +33,11 @@ public class Receipt {
         this.taxTotal = taxTotal;
     }
 
+    public BigDecimal getTaxableSubTotal() {
+        return taxableSubTotal;
+    }
 
-
-
-
-
-
+    public void setTaxableSubTotal(BigDecimal taxableSubTotal) {
+        this.taxableSubTotal = taxableSubTotal;
+    }
 }
