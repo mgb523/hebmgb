@@ -7,7 +7,6 @@ import com.hebmgb.shopcart.service.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ReceiptController {
@@ -17,7 +16,6 @@ public class ReceiptController {
 
     @PostMapping("/receipt")
     public Receipt getReceipt(@RequestBody Cart cart) {
-
         Receipt receipt = new Receipt();
 
         if (null != cart.items) {

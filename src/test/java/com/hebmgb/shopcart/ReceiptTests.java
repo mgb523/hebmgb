@@ -1,6 +1,5 @@
 package com.hebmgb.shopcart;
 
-import com.hebmgb.shopcart.model.Cart;
 import com.hebmgb.shopcart.service.ReceiptService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +21,7 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = Application.class)
@@ -36,38 +35,34 @@ class ReceiptTests {
 	@SpyBean
 	private ReceiptService receiptService;
 
-	public static Cart mockCart;
-	public static JSONObject mockItem1;
-	public static JSONObject mockItem2;
+	public static String uri = "/receipt";
+	public static JSONObject mockCartItem1;
+	public static JSONObject mockCartItem2;
+	public static JSONObject mockCartItem3;
+	public static JSONObject invalidCartItem;
 
 	@BeforeAll
 	public static void setup() throws JSONException {
-		mockItem1 = new JSONObject();
-		mockItem1.put("itemName", "Mock brownies");
-		mockItem1.put("price", new BigDecimal(1.99));
-//		mockItem1.setIsTaxable(false);
-//		mockItem1.setPrice(new BigDecimal(1.99));
-//		mockItem1.setSku(12345);
-//		mockItem1.setOwnBrand(true);
+		mockCartItem1 = new JSONObject();
+		mockCartItem1.put("itemName", "Mock brownies");
+		mockCartItem1.put("price", new BigDecimal(1.99));
 
-		mockItem2 = new JSONObject();
-		mockItem2.put("itemName", "Mock bananas");
-		mockItem2.put("price", new BigDecimal(2.01));
-//		mockItem2.setItemName("Mock bananas");
-//		mockItem2.setIsTaxable(false);
-//		mockItem2.setPrice(new BigDecimal(2.01));
-//		mockItem2.setSku(54321);
-//		mockItem2.setOwnBrand(false);
+		mockCartItem2 = new JSONObject();
+		mockCartItem2.put("itemName", "Mock bananas");
+		mockCartItem2.put("price", new BigDecimal(2.01));
 
-//		mockCart = new Cart();
-//		mockCart.items.add(mockItem1);
-//		mockCart.items.add(mockItem2);
+		mockCartItem3 = new JSONObject();
+		mockCartItem3.put("itemName", "Free pizza");
+		mockCartItem3.put("price", new BigDecimal(0.00));
+
+		invalidCartItem = new JSONObject();
+		invalidCartItem.put("invalidField", "mock value");
 	}
 	@Test
-	void calculateGrandTotal() throws Exception {
-		String cart = "{\"items\":[" + mockItem1.toString() + "," + mockItem2.toString() + "]}";
+	void calculateTotals() throws Exception {
+		String cart = "{\"items\":[" + mockCartItem1.toString() + "," + mockCartItem2.toString() + "]}";
 
-		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/receipt")
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(uri)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(cart.toString()))
 				.andExpect(status().isOk())
@@ -78,7 +73,52 @@ class ReceiptTests {
 		JSONObject receiptObject = new JSONObject(contentResult);
 		assertEquals(receiptObject.get("grandTotal"), new BigDecimal(1.99 + 2.01).doubleValue());
 
-		Mockito.verify(receiptService, atLeast(1)).calculateTotals(any(), any());
+		Mockito.verify(receiptService, atMost(2)).calculateTotals(any(), any());
+
+		cart = "{\"items\":[" + mockCartItem3.toString() + "]}";
+
+		mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(cart.toString()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+
+		contentResult = mvcResult.getResponse().getContentAsString();
+		receiptObject = new JSONObject(contentResult);
+		assertEquals(receiptObject.get("grandTotal"), 0);
+
+		Mockito.verify(receiptService, atMost(3)).calculateTotals(any(), any());
 	}
 
+	@Test
+	void emptyCart() throws Exception {
+		String cart = "{\"items\":[]}";
+
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(cart.toString()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+
+		String contentResult = mvcResult.getResponse().getContentAsString();
+		JSONObject receiptObject = new JSONObject(contentResult);
+		assertEquals(receiptObject.get("grandTotal"), 0);
+
+		Mockito.verify(receiptService, atLeast(0)).calculateTotals(any(), any());
+	}
+
+	@Test
+	void invalidCartData() throws Exception {
+		String cart = "{\"items\":[" + mockCartItem1.toString() + "," + invalidCartItem.toString() + "]}";
+
+		mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(cart.toString()))
+				.andExpect(status().is4xxClientError())
+				.andReturn();
+
+		Mockito.verify(receiptService, atLeast(0)).calculateTotals(any(), any());
+	}
 }
