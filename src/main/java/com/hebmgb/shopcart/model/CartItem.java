@@ -12,9 +12,13 @@ public class CartItem {
     private Boolean ownBrand;
     private BigDecimal price;
 
-    public CartItem(String itmeName, Integer sku, Boolean isTaxable, Boolean ownBrand, BigDecimal price) throws ApiRequestException {
-        if (null == price) {
-            throw new ApiRequestException("Price field was not specified");
+    public CartItem(String itemName, Integer sku, Boolean isTaxable, Boolean ownBrand, BigDecimal price) throws ApiRequestException {
+        if (itemName == null || itemName.isEmpty()) {
+            throw new ApiRequestException("ItemName field was not specified for one or more items in the cart");
+        } else if (null == price) {
+            throw new ApiRequestException("Price field was not specified for item '" + itemName + "'");
+        } else if (price.signum() == -1) {
+            throw new ApiRequestException("Price value is negative for item '" + itemName + "'");
         }
 
         this.itemName = itemName;
