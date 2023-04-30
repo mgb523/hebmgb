@@ -3,7 +3,7 @@ package com.hebmgb.shopcart.model;
 import java.math.BigDecimal;
 
 public class Receipt {
-    private BigDecimal grandTotal;
+    private BigDecimal grandTotal = BigDecimal.ZERO;
     private BigDecimal beforeDiscountSubtotal;
     private BigDecimal discountTotal;
     private BigDecimal afterDiscountsSubtotal;

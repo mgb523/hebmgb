@@ -1,42 +1,31 @@
 package com.hebmgb.shopcart.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hebmgb.shopcart.model.Cart;
 import com.hebmgb.shopcart.model.CartItem;
 import com.hebmgb.shopcart.model.Receipt;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.math.BigDecimal;
+import com.hebmgb.shopcart.service.ReceiptService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ReceiptController {
 
-//    @Autowired
-//    VeganizerService veganizerService;
+    @Autowired
+    ReceiptService receiptService;
 
-    ObjectMapper mapper = new ObjectMapper();
+    @PostMapping("/receipt")
+    public Receipt getReceipt(@RequestBody Cart cart) {
 
-    @GetMapping("/receipt")
-    public Receipt getReceipt(@RequestPart("cart") MultipartFile cart) throws IOException {
+        Receipt receipt = new Receipt();
 
-        Cart shoppingCart = mapper.readValue(cart.getBytes(), Cart.class);
-
-        BigDecimal grandTotal = BigDecimal.ZERO;
-        if (null != shoppingCart.items) {
-            for (CartItem item : shoppingCart.items) {
-                grandTotal = grandTotal.add(item.getPrice());
+        if (null != cart.items) {
+            for (CartItem item : cart.items) {
+                receiptService.calculateTotals(receipt, item);
             }
         }
 
-        Receipt receipt = new Receipt();
-        receipt.setGrandTotal(grandTotal);
         return receipt;
     }
 }
