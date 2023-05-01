@@ -14,10 +14,14 @@ public class CartItem {
     public CartItem(String itemName, Integer sku, boolean isTaxable, boolean ownBrand, BigDecimal price) throws ApiRequestException {
         if (itemName == null || itemName.isEmpty()) {
             throw new ApiRequestException("ItemName field was not specified for one or more items in the cart");
+        } else if (sku == null) {
+            throw new ApiRequestException("Sku field was not specified for one or more items in the cart");
+        } else if (sku <= 0) {
+            throw new ApiRequestException("Sku value cannot be 0, null, or negative: '" + itemName + "'");
         } else if (null == price) {
-            throw new ApiRequestException("Price field was not specified for item '" + itemName + "'");
+            throw new ApiRequestException("Price field was not specified: '" + itemName + "'");
         } else if (price.signum() == -1) {
-            throw new ApiRequestException("Price value is negative for item '" + itemName + "'");
+            throw new ApiRequestException("Price value cannot be negative: '" + itemName + "'");
         }
 
         this.itemName = itemName;

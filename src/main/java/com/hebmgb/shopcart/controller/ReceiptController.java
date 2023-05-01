@@ -20,7 +20,7 @@ public class ReceiptController {
 
         if (null != cart.items) {
             for (CartItem item : cart.items) {
-                receiptService.calculateTotals(receipt, item);
+                receiptService.calculateTotals(receipt, item, cart.coupons);
             }
         }
 

@@ -1,12 +1,15 @@
 package com.hebmgb.shopcart.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Receipt {
     private BigDecimal grandTotal = BigDecimal.ZERO;
-    private BigDecimal subTotal = BigDecimal.ZERO;
+    private BigDecimal subTotalBeforeDiscounts = BigDecimal.ZERO;
     private BigDecimal taxTotal = BigDecimal.ZERO;
-    private BigDecimal taxableSubTotal = BigDecimal.ZERO;
+    private BigDecimal subTotalAfterDiscounts = BigDecimal.ZERO;
+    private BigDecimal taxableSubTotalAfterDiscounts = BigDecimal.ZERO;
+    private BigDecimal discountTotal = BigDecimal.ZERO;
 
 
     public BigDecimal getGrandTotal() {
@@ -17,12 +20,12 @@ public class Receipt {
         this.grandTotal = grandTotal;
     }
 
-    public BigDecimal getSubTotal() {
-        return subTotal;
+    public BigDecimal getSubTotalBeforeDiscounts() {
+        return subTotalBeforeDiscounts;
     }
 
-    public void setSubTotal(BigDecimal subTotal) {
-        this.subTotal = subTotal;
+    public void setSubTotalBeforeDiscounts(BigDecimal subTotalBeforeDiscounts) {
+        this.subTotalBeforeDiscounts = subTotalBeforeDiscounts;
     }
 
     public BigDecimal getTaxTotal() {
@@ -33,11 +36,27 @@ public class Receipt {
         this.taxTotal = taxTotal;
     }
 
-    public BigDecimal getTaxableSubTotal() {
-        return taxableSubTotal;
+    public BigDecimal getSubTotalAfterDiscounts() {
+        return subTotalAfterDiscounts;
     }
 
-    public void setTaxableSubTotal(BigDecimal taxableSubTotal) {
-        this.taxableSubTotal = taxableSubTotal;
+    public void setSubTotalAfterDiscounts(BigDecimal subTotalAfterDiscounts) {
+        this.subTotalAfterDiscounts = subTotalAfterDiscounts;
+    }
+
+    public BigDecimal getTaxableSubTotalAfterDiscounts() {
+        return taxableSubTotalAfterDiscounts;
+    }
+
+    public void setTaxableSubTotalAfterDiscounts(BigDecimal taxableSubTotalAfterDiscounts) {
+        this.taxableSubTotalAfterDiscounts = taxableSubTotalAfterDiscounts;
+    }
+
+    public BigDecimal getDiscountTotal() {
+        return discountTotal;
+    }
+
+    public void setDiscountTotal(BigDecimal discountTotal) {
+        this.discountTotal = discountTotal;
     }
 }
