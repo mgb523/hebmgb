@@ -2,7 +2,7 @@
 Maria Garcia-Bodoh's code challenge, assigned by Gurgen Torosjan on April 28.
 
 # Overview
-Hello! I very much enjoyed working on this challenge.  I approached this task with the intention of demonstrating the development of the /receipt endpoint over the course of 4 sprints, each iteration progressively implementing one of the requested features.
+Hello! I very much enjoyed working on this challenge.  I approached this task with the intention of demonstrating the development of the <code>POST /receipt</code> endpoint over the course of 4 sprints, each iteration progressively implementing one of the requested features.
 
 Please refer to the Insights tab to access the 4 pull requests involved in the progression: https://github.com/mgb523/hebmgb/pulse
 
