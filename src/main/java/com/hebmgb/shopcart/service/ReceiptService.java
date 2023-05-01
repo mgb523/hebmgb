@@ -22,7 +22,7 @@ public class ReceiptService {
             Coupon clippedCoupon = coupons.stream().filter(c -> c.getAppliedSku().equals(item.getSku())).findAny().orElse(null);
             if (null != clippedCoupon) {
                 afterDiscountPrice = item.getPrice().subtract(clippedCoupon.getDiscountPrice());
-                receipt.setDiscountTotal(receipt.getDiscountTotal().add(clippedCoupon.getDiscountPrice()).setScale(2, RoundingMode.HALF_EVEN));
+                receipt.setDiscountTotal(receipt.getDiscountTotal().add(clippedCoupon.getDiscountPrice()));
 
                 receipt.setSubTotalAfterDiscounts(receipt.getSubTotalAfterDiscounts().add(afterDiscountPrice));
             } else {
@@ -33,14 +33,16 @@ public class ReceiptService {
         }
 
         // taxTotal, taxableSubTotalAfterDiscounts
+        BigDecimal afterTaxPrice = afterDiscountPrice;
         if (item.getIsTaxable()) {
-            BigDecimal itemTax = afterDiscountPrice.multiply(new BigDecimal(8.25 / 100.00));
-            receipt.setTaxTotal(receipt.getTaxTotal().add(itemTax).setScale(2, RoundingMode.HALF_EVEN));
+            BigDecimal itemTax = afterDiscountPrice.multiply(BigDecimal.valueOf((8.25 / 100.00))).setScale(2, RoundingMode.HALF_EVEN);
+            afterTaxPrice = afterTaxPrice.add(itemTax);
+            receipt.setTaxTotal(receipt.getTaxTotal().add(itemTax));
 
             receipt.setTaxableSubTotalAfterDiscounts(receipt.getTaxableSubTotalAfterDiscounts().add(afterDiscountPrice));
         }
 
         // grandTotal
-        receipt.setGrandTotal(receipt.getSubTotalBeforeDiscounts().add(receipt.getTaxTotal()));
+        receipt.setGrandTotal(receipt.getGrandTotal().add(afterTaxPrice));
     }
 }

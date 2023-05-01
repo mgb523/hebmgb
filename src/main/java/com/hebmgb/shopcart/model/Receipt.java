@@ -1,6 +1,7 @@
 package com.hebmgb.shopcart.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Receipt {
     private BigDecimal grandTotal = BigDecimal.ZERO;
